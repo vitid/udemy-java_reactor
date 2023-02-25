@@ -20,7 +20,7 @@ public class Util {
     }
 
     public static void println(String s){
-        System.out.println(s);
+        System.out.println("[%s]%s".formatted(Thread.currentThread().getName(), s));
     }
 
 

@@ -18,17 +18,17 @@ public class DefaultSubscriber<T> implements Subscriber<T> {
 
     @Override
     public void onNext(T t) {
-        System.out.println("[" + name + "]" + t.toString());
+        System.out.println("[%s][%s]%s".formatted(Thread.currentThread().getName(), name, t.toString()));
     }
 
     @Override
     public void onError(Throwable t) {
-        System.out.println("[" + name + "]" + "error:" + t.getMessage());
+        System.out.println("[%s][%s]%s".formatted(Thread.currentThread().getName(),  name, "error:" + t.getMessage()));
     }
 
     @Override
     public void onComplete() {
-        System.out.println("[" + name + "]" + "completed");
+        System.out.println("[%s][%s]%s".formatted(Thread.currentThread().getName(),  name, "Completed"));
     }
     
 }
