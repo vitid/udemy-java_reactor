@@ -15,6 +15,15 @@ public class Util {
         }};
     }
 
+    public static Runnable sleeperMil(int mil){
+        return () -> {try {
+            Thread.sleep(mil);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }};
+    }
+
     public static <T> DefaultSubscriber<T> subscriber(String name){
         return new DefaultSubscriber<T>(name);
     }

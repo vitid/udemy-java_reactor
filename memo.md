@@ -32,7 +32,6 @@ You need to subscribe the 2nd publisher on another thread, like:
 * Use ```.log()``` on ```Mono/Flux``` to make sense of the operation that's going on
 * You can implement a custom ```Subscriber``` with ```subscribeWith()```to have a better control of how subscription should work. 
 You use ```Subscription``` object to request/cancel the subscription. Unlike ```subscribe()```, this will not emit object after you subscribe. Note that if the subscription is canceled, ```onComplete()``` will also not be invoked. Refer to memo ```CustomSubscriber``` and ```StockObserver```. Also note the difference between ```CustomSubscriber``` and ```StockObserver```, in ```CustomSubscriber``` is run on the main thread while ```StockObserver``` is run on a separate thread
-* ```Flux.interval()``` is run on a separate scheduler by default
 * Use ```Flux.next()``` to convert a flux to a mono
 * Use ```Flux.create() / push() / generate()``` to create your own publisher. Refer to ```FluxSinkCreateGeneratePush```
   * ```Flux.crate()``` need to handle downstream cancellation. Can create ```Consumer``` in its own separated class and be shared by another thread in a Thread-safe way
@@ -56,4 +55,18 @@ You use ```Subscription``` object to request/cancel the subscription. Unlike ```
   * ```switchOnFirst()``` switch to the 2nd publisher if the **FIRST** vaue emitted follow some condition
   * ```flatMap()``` very useful when we have one service that return Publisher, which call another service that return another Publisher. We use this to flatten the 2nd publisher result. **Note** the result can be out-of-order (better look at the memo code)
   * ```concatMap()``` fix the above ```flatMap()``` issue. It'll drain element from the 1st publisher before going to subsequent publisher
+* What we have use so far is **Cold** Publisher. It'll emit a new item for each subscriber
+* **Hot** Publisher can be shared by multiple subscribers. See ```HotColdPublisher```
+    * ```share()``` can be used to convert from Cold to Hot Publisher. This's the same as calling ```publish().refCount(1)```. We can set ```refCount(count)``` to set the minimum number of subscribers required before Hot Publisher start producing. **Note** that after it emit all items and there's a new subscribers that are subscribed (equal to the number of count), this Hot Publisher will start acting like a Cold Publisher where it'll produce the element again
+    * To prevent Hot Publisher from producing element again, as mentioned in the above, use ```autoConnect(count)``` instead. If you set count to 0, it'll start emitting element immediately, even with no subscriber (not really see usecase in this)
+    * Use ```cache(history_count)``` to cache the history of Hot Publisher so the future subscribers can be do on ```onNext()``` immediately
+* Threading & Schedulers (refer ```ThreadingSchedule```)
+    * Use ```Schedulers.boundedElastic()``` for IO task and ```Schedulers.parallel()``` for CPU intensive task. ```Schedulers.parallel()``` **doesn't** mean that the value will be emitted in parallel
+    * ```subscribeOn()``` is for Publisher. If you develop a Publisher, you should specify ```subscribeOn()``` to it. If there're many ```subscribeOn()```, the one closest to the source take the priority
+    * ```publishOn()``` is for Subscriber. Thread will be swtiched as it flow down from the source to subscriber
+    * To make value emitted from Publisher being done in a parallel way, use ```parallel() & runOn()```
+    * Operation ```interval(), delayElements()``` internally subscribe to a separate thread
+* Backpressure (refer ```BackPressure```)
+    * ```onBackpressureBuffer()``` is a dafault behavior. It'll hold all emitted values in memory
+    * You can use ```onBackpressureDrop/Latest/Error()``` to handle overflow starategy. There's also a variant that let you define Consumer to manage the dropped element(can be usefule like putting the dropped element into a file for later process)
 

@@ -13,6 +13,7 @@ public class DefaultSubscriber<T> implements Subscriber<T> {
     @Override
     public void onSubscribe(Subscription s) {
         this.subscription = s;
+        System.out.println("[%s][%s]%s".formatted(Thread.currentThread().getName(), name, "subscribed..."));
         s.request(Integer.MAX_VALUE);
     }
 
