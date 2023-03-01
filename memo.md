@@ -69,4 +69,10 @@ You use ```Subscription``` object to request/cancel the subscription. Unlike ```
 * Backpressure (refer ```BackPressure```)
     * ```onBackpressureBuffer()``` is a dafault behavior. It'll hold all emitted values in memory
     * You can use ```onBackpressureDrop/Latest/Error()``` to handle overflow starategy. There's also a variant that let you define Consumer to manage the dropped element(can be usefule like putting the dropped element into a file for later process)
+* CombinePublishers (refer ```CombinePublishers```)
+    * ```A.startWith(B)```: B will be completely drained before going to A. Can be used as a caching pattern
+    * ```A.concatWith(B)```: A will be completely drained before going to B. Use ```concatDelayError()``` to delay the error
+    * ```A.merge(B)```: emit as each publishers emitting separately
+    * ```A.zip(B)```: zip operation
+    * ```A.combineLatest(B)```: combine the **latest** value of A & B. Useful for something like stock price 
 
