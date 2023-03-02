@@ -28,6 +28,7 @@ You need to subscribe the 2nd publisher on another thread, like:
 ```
 * We can create ```Mono``` from ```Future```(when you need to return something) or ```Runnable```(when return nothing). If it's from ```Runnable``` then that means ```onNext()``` will not be called
 * Use ```Mono<Void>``` with ```Mono.fromRunnable()```
+* Use ```then(Mono)``` to provide as complete signal. With ```then()```, this will return ```Mono<Void>```
 * Since java ```Stream``` can be used only once. If you subscribe to ```Flux.fromStream(${streamObject})``` multiple times will cause an error. The proper way to do it is using the supplier version```Flux.fromStream(() -> {${generate a new stream}})```
 * Use ```.log()``` on ```Mono/Flux``` to make sense of the operation that's going on
 * You can implement a custom ```Subscriber``` with ```subscribeWith()```to have a better control of how subscription should work. 
@@ -74,5 +75,11 @@ You use ```Subscription``` object to request/cancel the subscription. Unlike ```
     * ```A.concatWith(B)```: A will be completely drained before going to B. Use ```concatDelayError()``` to delay the error
     * ```A.merge(B)```: emit as each publishers emitting separately
     * ```A.zip(B)```: zip operation
-    * ```A.combineLatest(B)```: combine the **latest** value of A & B. Useful for something like stock price 
-
+    * ```A.combineLatest(B)```: combine the **latest** value of A & B. Useful for something like stock price
+* Batching (refer ```Batching```)
+    * ```buffer(n)``` group incoming elements in to a list of n elements. Can also supply ```Duration``` to emit the list of value as soon as time out reach or use both hybrid approach. Can use with ```skip()``` to keep some number of the last elements in the group (if skip < n) or do sampling (if skip > n)
+    * ```window()``` this is similar to ```buffer()``` but it'll create a flux insterad of List. The benefit is it can be process immediately. When the current group is done processing, it'll send ```onComplete``` signal and create a new ```Flux```
+    * ```groupBy()``` to group fluxes by a key. This returnts ```GroupedFlux```. Need to do another subscribe to process that group
+* Repeat and Retry (refer ```RepeatRetry```)
+    * ```repeat()``` to repeat the publisher (in case there's no error). There's a version that can be supplied with terminate condition. **Noted** that the subscriber will not receive the complete signal until the last repeat
+    * ```retry()``` to retry in case of error. Can use ```Retry.fixedDelay()``` etc to add delay and more advance options. ```Retry.from(...)``` to customize the retry flow to do something like: *keep retrying if server error is 5xx but stop if it's 4xx*
