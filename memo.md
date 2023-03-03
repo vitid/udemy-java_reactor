@@ -83,3 +83,6 @@ You use ```Subscription``` object to request/cancel the subscription. Unlike ```
 * Repeat and Retry (refer ```RepeatRetry```)
     * ```repeat()``` to repeat the publisher (in case there's no error). There's a version that can be supplied with terminate condition. **Noted** that the subscriber will not receive the complete signal until the last repeat
     * ```retry()``` to retry in case of error. Can use ```Retry.fixedDelay()``` etc to add delay and more advance options. ```Retry.from(...)``` to customize the retry flow to do something like: *keep retrying if server error is 5xx but stop if it's 4xx*
+* Sink (refer ```Sink```)
+    * Instead of using facory methos in ```Mono.xxx()``` or ```Flux.xxx()``` to initiate the message publisher, we can publish the message directly using ```Sinks```. This can be converted to either ```Mono``` (to emit only 1 message) or ```Flux```. Then use ```Sinks``` object to publsh a message and ```Mono / Flux``` object to receive the message
+    * ```Sinks``` can be either unicast (limit to only 1 subscriber) or multicast. Behavior can be configured to behave like Hot publisher or Cold publisher (keep some message history)
