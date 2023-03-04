@@ -86,3 +86,7 @@ You use ```Subscription``` object to request/cancel the subscription. Unlike ```
 * Sink (refer ```Sink```)
     * Instead of using facory methos in ```Mono.xxx()``` or ```Flux.xxx()``` to initiate the message publisher, we can publish the message directly using ```Sinks```. This can be converted to either ```Mono``` (to emit only 1 message) or ```Flux```. Then use ```Sinks``` object to publsh a message and ```Mono / Flux``` object to receive the message
     * ```Sinks``` can be either unicast (limit to only 1 subscriber) or multicast. Behavior can be configured to behave like Hot publisher or Cold publisher (keep some message history)
+* Context (refer ```ContextDemo```)
+    * Subscriber can send a context to the Publisher. Context is just a key-value pair
+    * Use ```contextWrite()``` on the downstream to set a context from downstream to upstream. The value can be overridden
+    * Use ```deferContextual()``` on the upstream to obtain Context from the downstream
