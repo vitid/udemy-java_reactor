@@ -90,3 +90,10 @@ You use ```Subscription``` object to request/cancel the subscription. Unlike ```
     * Subscriber can send a context to the Publisher. Context is just a key-value pair
     * Use ```contextWrite()``` on the downstream to set a context from downstream to upstream. The value can be overridden
     * Use ```deferContextual()``` on the upstream to obtain Context from the downstream
+* Unittest using ```StepVerifier``` (refer: ```UnitTest```)
+    * ```StepVerifier.create``` will subscribe to the publisher for you. It will also perform blocking so you don't need to block the thread yourself
+    * ```expectNext(), assertNext(), expectNextCount(), verifyError()``` and their variants can be used
+    * ```verify(Duration)``` can be used if you want to wait for only a certain amount of time
+    * Use ```withVirtualTime()``` to speed up the test. You can also use ```expectNoEvent(Duration)``` in case you expect no event in that duration. **Note** that you should have ```expectSubscription()``` first
+    * Test can be annotated with scenario name using ```StepVerifierOptions.create().scenarioName()``` or ```as()```
+    * Use ```StepVerifierOptions.create().withInitialContext()``` to inject initial context for the test

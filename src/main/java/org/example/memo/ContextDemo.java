@@ -8,9 +8,7 @@ public class ContextDemo {
     public static void main(String[] args) {
         ContextDemo c = new ContextDemo();
 
-        //c.useContext();
-
-        c.rateLimiter();
+        c.useContext();
     }
 
     void useContext(){
